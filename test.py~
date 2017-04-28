@@ -1,0 +1,5 @@
+from piece.py import *
+
+pawn = Pawn()
+pawn.setCoords(4,1)
+pawn.setOwner('BLACK')
