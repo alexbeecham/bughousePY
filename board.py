@@ -41,13 +41,8 @@ class Board():
             img = pieceimages[piece.image]
             surface.blit(img, (x+13,y+13))
 
-        pygame.display.flip()
 
-        '''for piece in self.black.pieces:
-            x = self.length * piece.xCoord
-            y = self.length * piece.yCoord
-            img = pieceimages[piece.image]
-            surface.blit(img, (x,y))'''
+
 
     def draw_board(self):
         pygame.init()
@@ -55,8 +50,10 @@ class Board():
 
         n = 8
         sq_sz = self.length / n
-
+        clickedPiece = None
         surface = pygame.display.set_mode((self.length, self.length))
+        currentPlayer = "WHITE"
+
 
         while True:
             pygame.event.get()
@@ -68,7 +65,38 @@ class Board():
                     c_indx = (c_indx + 1) % 2
 
             self.draw_pieces(surface)
-
+            ev = pygame.event.get()
+            for event in ev:
+                if event.type == pygame.MOUSEBUTTONUP:
+                    pos = pygame.mouse.get_pos()
+                    x = pos[0]
+                    y = pos[1]
+                    x = math.floor(x/sq_sz)
+                    y = math.floor(y/sq_sz)
+                    if(clickedPiece is not None):
+                        pieceAtClickedSq = self.white.get_piece_at(x,y)
+                        if(pieceAtClickedSq==None):
+                            pieceAtClickedSq = self.black.get_piece_at(x,y)
+                        if(clickedPiece.isLegalMove(x,y,pieceAtClickedSq) and clickedPiece.owner==currentPlayer):
+                            self.black.remove_piece_at(x,y)
+                            self.white.remove_piece_at(x,y)
+                            clickedPiece.xCoord = x
+                            clickedPiece.yCoord = y
+                            clickedPiece = None
+                            if(currentPlayer=='WHITE'):
+                                currentPlayer='BLACK'
+                            else:
+                                currentPlayer='WHITE'
+                        else:
+                            clickedPiece=None
+                            
+                    elif(self.white.get_piece_at(x,y) is not None):
+                        clickedPiece = self.white.get_piece_at(x,y)
+                    elif(self.black.get_piece_at(x,y) is not None):
+                        clickedPiece = self.black.get_piece_at(x,y)
+                    else:
+                        clickedPiece=None
+            pygame.display.flip()
 if __name__ == "__main__":
     chessboard = Board(800)
     chessboard.draw_board()

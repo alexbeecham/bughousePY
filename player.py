@@ -67,8 +67,8 @@ class Player():
         return None
 
     def remove_piece_at(self, x, y):
-        for piece in self.pieces:
-            if piece.xCoord == x and piece.yCoord == y:
+        for piece in range(0,len(self.pieces)-1):
+            if self.pieces[piece].xCoord == x and self.pieces[piece].yCoord == y:
                 del self.pieces[piece]
 
     def add_piece(self, piece):
