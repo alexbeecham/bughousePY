@@ -71,6 +71,30 @@ class Player():
             if self.pieces[piece].xCoord == x and self.pieces[piece].yCoord == y:
                 del self.pieces[piece]
 
-    def add_piece(self, piece):
-        if piece.owner == self.color:
-            self.pieces.append(piece)
+    def add_piece(self, ans,x,y):
+        imageKey = "W"
+        piece = None
+        if(self.color=='BLACK'):
+            imageKey="B"
+        if(ans=='None'):
+            return
+        elif(ans=='Rook'):
+            imageKey+="Rook"
+            piece = Rook()
+        elif(ans=='Horse'):
+            imageKey+='Horse'
+            piece = Horse()
+        elif(ans=='Bishop'):
+            imageKey+='Bishop'
+            piece=Bishop()
+        elif(ans=='Queen'):
+            imageKey+='Queen'
+            piece=Queen()
+        elif(ans=='King'):
+            imageKey+='King'
+            piece=King()
+        piece.image = imageKey
+        piece.owner = self.color
+        piece.xCoord = x
+        piece.yCoord = y
+        self.pieces.append(piece)

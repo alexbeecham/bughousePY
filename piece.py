@@ -99,7 +99,7 @@ class Bishop(Piece):
         if(x>7 or y>7 or x<0 or y<0):
             return False
         elif(piece==None or piece.owner!=self.owner):
-            if(self.manhatDist(x,y)%2==0 and self.manhatDist(x,y)>0 and x!=self.xCoord and y!=self.yCoord):
+            if(self.manhatDist(x,y)%2==0 and self.manhatDist(x,y)>0 and x!=self.xCoord and y!=self.yCoord and (abs(self.xCoord-x)==abs(self.yCoord-y))):
                 return True
         return False
 
@@ -113,7 +113,7 @@ class Queen(Piece):
         elif(piece==None or piece.owner!=self.owner):
             if((x==self.xCoord and y!=self.yCoord) or (x!=self.xCoord and y==self.yCoord)):
                 return True
-            elif(self.manhatDist(x,y)%2==0 and self.manhatDist(x,y)>0 and x!=self.xCoord and y!=self.yCoord):
+            elif(self.manhatDist(x,y)%2==0 and self.manhatDist(x,y)>0 and x!=self.xCoord and y!=self.yCoord and (abs(self.xCoord-x)==abs(self.yCoord-y))):
                 return True
         return False
 
@@ -125,7 +125,7 @@ class King(Piece):
         if(x>7 or y>7 or x<0 or y<0):
             return False
         elif(piece==None or piece.owner!=self.owner):
-            if(((x==self.xCoord and y!=self.yCoord) or (x!=self.xCoord and y==self.yCoord)) and Piece.manhatDist(x,y)==1):
+            if(((x==self.xCoord and y!=self.yCoord) or (x!=self.xCoord and y==self.yCoord)) and self.manhatDist(x,y)==1):
                 return True
             elif(self.manhatDist(x,y)%2==0 and self.manhatDist(x,y)==1 and x!=self.xCoord and y!=self.yCoord):
                 return True
