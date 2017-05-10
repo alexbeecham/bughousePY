@@ -1,0 +1,11 @@
+from twisted.internet.protocol import ClientFactory,Protocol, Factory
+from twisted.internet import reactor
+import time
+from collections import deque
+
+while(1):
+    r = raw_input(">")
+    if(r=='q'):
+        return
+    reactor.connectTCP("localhost",8000, chatFactory(message)
+    reactor.run()

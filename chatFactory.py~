@@ -1,0 +1,74 @@
+from twisted.internet.protocol import ClientFactory,Protocol, Factory
+from twisted.protocols.basic import LineReceiver
+from twisted.internet import reactor
+import time
+from collections import deque
+
+
+
+class chatClient(LineReceiver):
+    def __init__(self):
+        self.message=None
+
+    def connectionMade(self):
+        print "connected to server"
+
+    def lineReceived(self,data):
+        print data
+        #self.sendData()
+
+    def sendData(self):
+        data = raw_input(">")
+        if data:
+            self.transport.write(data+"\r\n")
+        #else:
+        #    self.transport.loseConnection()
+
+    def connectionLost(self, reason):
+        print reason
+
+
+class chatFactory(ClientFactory):
+    def buildProtocol(self, addr):
+        return chatClient()
+
+class chatServerProtocol(LineReceiver):
+    def __init__(self, users):
+        self.users = users
+        self.name = None
+        self.state = "GETNAME"
+
+    def connectionMade(self):
+        self.sendLine("What player number are you?")
+
+    def connectionLost(self,reason):
+        print "Connection Lost"
+    
+    def lineReceived(self, line):
+        if(self.state== "GETNAME"):
+            self.handle_GETNAME(line)
+        else:
+            self.handle_CHAT(line)
+
+    def handle_GETNAME(self,line):
+        if self.users.has_key(line):
+            self.sendLine("Player taken. Please choose a different player number")
+            return
+        self.sendLine("Welcome Player %s" % (line,))
+        self.name = line
+        self.users[line]=self
+        self.state="CHAT"
+
+    def handle_CHAT(self,message):
+        message = "Player "+self.name+": "+message
+        for name, protocol in self.users.iteritems():
+            if protocol !=self:
+                protocol.sendLine(message)
+        print message
+
+class chatServerFactory(Factory):
+    def __init__(self):
+        self.users = {}
+
+    def buildProtocol(self, addr):
+        return chatServerProtocol(self.users)

@@ -5,9 +5,11 @@ from player import *
 from piece import *
 from pygame.locals import*
 from twisted.internet.protocol import ClientFactory,Protocol
+from twisted.internet.task import LoopingCall
 from twisted.internet import reactor
 import time
 from collections import deque
+from chatFactory import *
 
 
 class GameClient(Protocol): #client that sends moves made to the server
@@ -85,7 +87,7 @@ class Board():
             img = pieceimages[piece.image]
             surface.blit(img, (x+13,y+13))
 
-def sendMove(self,piece,x,y): #sends the made move to the server
+    def sendMove(self,piece,x,y): #sends the made move to the server
         queue = deque()
         move = str(self.player)+","+str(piece.xCoord)+","+str(piece.yCoord)+","+str(x)+","+str(y) #encodes move in format of playerNum,startX,startY,endX,endY
         reactor.connectTCP("localhost",8000,GameFactory(move,queue,False)) # sends move to server
@@ -250,13 +252,13 @@ def sendMove(self,piece,x,y): #sends the made move to the server
             return True
         return False
 
-    def play_board(self, otherBoard): #draws and plays the game
+    def play_board(self, otherBoard,clickedPiece): #draws and plays the game
         pygame.init()
         colors = [(255, 0, 0), (0, 0, 255)]
 
         n = 8
         sq_sz = self.length / n
-        clickedPiece = None # holds the piece selected by the player
+        #clickedPiece = None # holds the piece selected by the player
         surface = pygame.display.set_mode((2*self.length+200, self.length))
         currentPlayer = "WHITE"
         surface = otherBoard.drawBoard(surface) # draws the other board
@@ -272,6 +274,12 @@ def sendMove(self,piece,x,y): #sends the made move to the server
             self.draw_pieces(surface,self.black,self.white) #draw the pieces the player is playing with
             ev = pygame.event.get() # if there is a button pressed or a mouse click
             for event in ev:
+                '''if event.type == pygame.KEYDOWN:
+                    if event.key==K_RETURN:
+                        message = input(">")
+                        factory = chatFactory(message)
+                        reactor.connectTCP("localhost",8000,factory)
+                '''        
                 if event.type == pygame.MOUSEBUTTONUP: #if the mouse is pressed
                     #convert the mouse click position to grid coordinates
                     pos = pygame.mouse.get_pos()
@@ -327,7 +335,18 @@ def sendMove(self,piece,x,y): #sends the made move to the server
                     else: # default to the player clicked no piece
                         clickedPiece=None
             pygame.display.flip()
+            #return self,otherBoard,clickedPiece
+
+def runGame(board1, board2, clickedPiece):
+    #while(1):
+    board1.play_board(board2,clickedPiece)
+
 if __name__ == "__main__":
     chessboard1 = Board(800,0) # board 1 is the one you play on
     chessboard2 = Board(800,1000) # board 2 is the board your teammate plays on
-    chessboard1.play_board(chessboard2) # play board1 and draw board2
+    #chessboard1.play_board(chessboard2) # play board1 and draw board2
+    clickedPiece = None
+    #t = LoopingCall(runGame,(chessboard1,chessboard2,clickedPiece))
+    #t.start(1/60)
+    runGame(chessboard1,chessboard2, clickedPiece)
+    #reactor.run()

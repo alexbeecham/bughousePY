@@ -1,1 +1,5 @@
-A game of bughouse chess. To run, type "python2 bughouse.py"
+A game of bughouse chess. To play chess run "python board.py" and in another console, run "python chatServer.py". To join the chat, open "python chatClient.py" in another console. When you run board, you will be asked what player you want to be (1-4). Players 1 and 2 will play against players 2 and 4. Players 1 and 3 will be white players. Players 2 and 4 will be black players. Players 1 and 4 will play against each other. Players 2 and 3 will play against each other. You will always control the pieces on the board on the left. To move a piece, click the piece then click the square you want to move to. If you want to send a message to your teammate, enter the message in the console running chatServer and press enter to send it. If you move a pawn to the other side of the board, follow the commands in the console running board.py. To add a piece your partner has taken, press the space bar, follow the prompts in the console, then press enter. If your partner takes a king, you MUST place it on the board. The winning team is the first one to capture all 4 kings. The game will end in a draw after 15 minutes. The clock starts when all 4 players have joined.
+
+
+
+Written by Alex Beecham Gaurav Sirdeshpande
