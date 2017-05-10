@@ -4,5 +4,6 @@ import time
 from collections import deque
 from chatFactory import *
 
+'''Listen for client'''
 reactor.listenTCP(8000, chatServerFactory())
 reactor.run()

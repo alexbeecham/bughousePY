@@ -4,7 +4,7 @@ import time
 from collections import deque
 from chatFactory import *
 
-
+'''Connect to server'''
 factory = chatFactory()
 reactor.connectTCP("localhost",8000,factory)
 reactor.run()

@@ -8,6 +8,9 @@ import pygame
 pygame.init()
 
 class chatClient(LineReceiver):
+
+'''The protocol for the client side'''
+
     def __init__(self):
         self.message=None
 
@@ -18,7 +21,7 @@ class chatClient(LineReceiver):
         print (data)
         self.sendData()
 
-    def sendData(self):
+    def sendData(self):     # send data (i.e. chat message) to the server
         data=input(">")
         if data is not None:
             data+='\r\n'
@@ -32,31 +35,37 @@ class chatClient(LineReceiver):
 
 
 class chatFactory(ClientFactory):
+
+'''The factory for the client side'''
+
     def __init__(self):
         self.message=None
     def buildProtocol(self, addr):
         return chatClient()
 
 class chatServerProtocol(LineReceiver):
+
+'''The protocol for the serve side'''
+
     def __init__(self, users):
         self.users = users
         self.name = None
-        self.state = "GETNAME"
+        self.state = "GETNAME"      # stores whether we're getting a player number, or chat message
 
-    def connectionMade(self):
+    def connectionMade(self):       # Asks the player what number (1-4) they are
         self.sendLine(str("What player number are you?").encode('utf-8'))
 
     def connectionLost(self,reason):
         print ("Connection Lost")
-    
-    def lineReceived(self, line):
+
+    def lineReceived(self, line):       # Calls appropriate function to handle message
         if(self.state== "GETNAME"):
             self.handle_GETNAME(line)
         else:
             self.handle_CHAT(line)
 
-    def handle_GETNAME(self,line):
-        if line in self.users:
+    def handle_GETNAME(self,line):      # function to get player number from client
+        if line in self.users:          # check what player numbers are still available
             self.sendLine("Player taken. Please choose a different player number")
             return
         message = str("Welcome Player %s"%(line,))
@@ -66,7 +75,7 @@ class chatServerProtocol(LineReceiver):
         self.state="CHAT"
         print(message)
 
-    def handle_CHAT(self,message):
+    def handle_CHAT(self,message):      # function to get chat messages from client
         message = str("Player %s %s %s"%(self.name," : ",message,))
         for name, protocol in self.users.items():
             if protocol !=self:
@@ -74,6 +83,9 @@ class chatServerProtocol(LineReceiver):
         print (message)
 
 class chatServerFactory(Factory):
+
+'''Factory for the server side'''
+
     def __init__(self):
         self.users = {}
 
